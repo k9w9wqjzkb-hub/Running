@@ -388,6 +388,16 @@
     <div class="hero-sub" id="hero-sub">Piano 16 settimane · 4 sessioni/settimana</div>
   </div>
 
+  <!-- Legenda passo -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+    <span style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;width:100%">Zone di passo</span>
+    <span style="font-size:12px"><span class="workout-type type-easy">Scarico</span> <span style="color:var(--muted);font-size:11px">5:30–5:50</span></span>
+    <span style="font-size:12px"><span class="workout-type type-easy" style="background:rgba(100,200,100,0.08)">Facile</span> <span style="color:var(--muted);font-size:11px">5:20–5:40</span></span>
+    <span style="font-size:12px"><span class="workout-type type-tempo">Soglia</span> <span style="color:var(--muted);font-size:11px">4:20–4:30</span></span>
+    <span style="font-size:12px"><span class="workout-type type-interval">Intervalli</span> <span style="color:var(--muted);font-size:11px">4:00–4:15</span></span>
+    <span style="font-size:12px"><span class="workout-type type-long">Lungo</span> <span style="color:var(--muted);font-size:11px">5:10–5:30</span></span>
+  </div>
+
   <!-- Race selector -->
   <p class="section-title">Seleziona la gara</p>
   <div class="race-grid">
@@ -538,94 +548,105 @@
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
 
+// ─── ZONE DI PASSO (base: 10km @ 4:50-5:00) ──────────────────────────────
+// Scarico / Facile:   5:30-5:50 /km
+// Lungo:              5:20-5:40 /km
+// Soglia (Tempo):     4:20-4:30 /km
+// Intervalli:         4:00-4:10 /km
+// Ritmo gara mezza:   4:55-5:05 /km  → obiettivo ~1h45'
+
 const PLANS = {
   marathon: {
     name: 'Maratona', distance: '42.195', weeks: 16, sessionsPerWeek: 4,
+    days: ['LUN · Scarico', 'MER · Lavori', 'VEN · Facile', 'DOM · Lungo'],
     months: [
-      { month: 'Mese 1 – Base', weeks: [
-        { week: 1, sessions: ['Facile 8km','Facile 6km','Corsa Continua 12km','Riposo Attivo 5km'], types: ['easy','easy','long','easy'] },
-        { week: 2, sessions: ['Facile 8km','Tempo 8km','Lungo 16km','Facile 6km'], types: ['easy','tempo','long','easy'] },
-        { week: 3, sessions: ['Facile 10km','Intervalli 8x800m','Lungo 18km','Facile 6km'], types: ['easy','interval','long','easy'] },
-        { week: 4, sessions: ['Facile 8km','Tempo 10km','Lungo 20km','Riposo Attivo'], types: ['easy','tempo','long','rest'] },
+      { month: 'Mese 1 – Base Aerobica', weeks: [
+        { week: 1,  sessions: ['Scarico 8km @ 5:40',  'Progressivo 10km (5:30→4:50)',     'Facile 8km @ 5:30',  'Lungo 18km @ 5:30'],  types: ['easy','tempo','easy','long'] },
+        { week: 2,  sessions: ['Scarico 8km @ 5:40',  '6x1km @ 4:10 (rec 90")',           'Facile 8km @ 5:30',  'Lungo 19km @ 5:30'],  types: ['easy','interval','easy','long'] },
+        { week: 3,  sessions: ['Scarico 8km @ 5:40',  'Tempo 12km @ 4:25',               'Facile 9km @ 5:30',  'Lungo 21km @ 5:25'],  types: ['easy','tempo','easy','long'] },
+        { week: 4,  sessions: ['Scarico 6km @ 5:50',  '5x1km @ 4:10 (scarico)',           'Facile 6km @ 5:40',  'Lungo 15km @ 5:35 (scarico)'], types: ['easy','interval','easy','long'] },
       ]},
       { month: 'Mese 2 – Costruzione', weeks: [
-        { week: 5, sessions: ['Facile 10km','Intervalli 10x800m','Lungo 22km','Facile 8km'], types: ['easy','interval','long','easy'] },
-        { week: 6, sessions: ['Facile 10km','Tempo 12km','Lungo 24km','Facile 8km'], types: ['easy','tempo','long','easy'] },
-        { week: 7, sessions: ['Facile 12km','Intervalli 6x1km','Lungo 26km','Facile 8km'], types: ['easy','interval','long','easy'] },
-        { week: 8, sessions: ['Facile 8km','Tempo 8km','Lungo 18km (scarico)','Riposo'], types: ['easy','tempo','long','rest'] },
+        { week: 5,  sessions: ['Scarico 9km @ 5:40',  '8x1km @ 4:10 (rec 90")',           'Facile 9km @ 5:25',  'Lungo 23km @ 5:20'],  types: ['easy','interval','easy','long'] },
+        { week: 6,  sessions: ['Scarico 9km @ 5:40',  'Tempo 14km @ 4:22',               'Facile 9km @ 5:25',  'Lungo 25km @ 5:20'],  types: ['easy','tempo','easy','long'] },
+        { week: 7,  sessions: ['Scarico 10km @ 5:35', '3x3km @ 4:15 (rec 3\')',           'Facile 10km @ 5:25', 'Lungo 27km @ 5:15'],  types: ['easy','interval','easy','long'] },
+        { week: 8,  sessions: ['Scarico 7km @ 5:45',  'Tempo 10km @ 4:25 (scarico)',      'Facile 7km @ 5:35',  'Lungo 18km @ 5:30 (scarico)'], types: ['easy','tempo','easy','long'] },
       ]},
       { month: 'Mese 3 – Picco', weeks: [
-        { week: 9, sessions: ['Facile 12km','Intervalli 8x1km','Lungo 28km','Facile 10km'], types: ['easy','interval','long','easy'] },
-        { week: 10, sessions: ['Facile 12km','Tempo 16km','Lungo 30km','Facile 10km'], types: ['easy','tempo','long','easy'] },
-        { week: 11, sessions: ['Facile 12km','Intervalli 5x2km','Lungo 32km','Facile 8km'], types: ['easy','interval','long','easy'] },
-        { week: 12, sessions: ['Facile 10km','Tempo 10km','Lungo 22km (scarico)','Riposo'], types: ['easy','tempo','long','rest'] },
+        { week: 9,  sessions: ['Scarico 10km @ 5:35', '5x2km @ 4:12 (rec 2\')',           'Facile 10km @ 5:20', 'Lungo 29km @ 5:15'],  types: ['easy','interval','easy','long'] },
+        { week: 10, sessions: ['Scarico 10km @ 5:35', 'Tempo 16km @ 4:20',               'Facile 10km @ 5:20', 'Lungo 31km @ 5:10'],  types: ['easy','tempo','easy','long'] },
+        { week: 11, sessions: ['Scarico 10km @ 5:35', '3x5km @ 4:20 (rec 3\')',           'Facile 10km @ 5:20', 'Lungo 32km @ 5:10'],  types: ['easy','interval','easy','long'] },
+        { week: 12, sessions: ['Scarico 8km @ 5:40',  'Tempo 10km @ 4:25 (scarico)',      'Facile 8km @ 5:30',  'Lungo 22km @ 5:25 (scarico)'], types: ['easy','tempo','easy','long'] },
       ]},
       { month: 'Mese 4 – Tapering', weeks: [
-        { week: 13, sessions: ['Facile 10km','Intervalli 6x1km','Lungo 26km','Facile 8km'], types: ['easy','interval','long','easy'] },
-        { week: 14, sessions: ['Facile 8km','Tempo 10km','Lungo 20km','Facile 6km'], types: ['easy','tempo','long','easy'] },
-        { week: 15, sessions: ['Facile 8km','Tempo 6km','Facile 10km','Riposo'], types: ['easy','tempo','easy','rest'] },
-        { week: 16, sessions: ['Facile 5km','Stretching','Facile 3km','🏁 GARA MARATONA'], types: ['easy','rest','easy','long'] },
+        { week: 13, sessions: ['Scarico 9km @ 5:40',  '4x2km @ 4:12 (rec 2\')',           'Facile 9km @ 5:25',  'Lungo 26km @ 5:15'],  types: ['easy','interval','easy','long'] },
+        { week: 14, sessions: ['Scarico 8km @ 5:40',  'Tempo 10km @ 4:22',               'Facile 8km @ 5:30',  'Lungo 20km @ 5:20'],  types: ['easy','tempo','easy','long'] },
+        { week: 15, sessions: ['Scarico 6km @ 5:45',  '4x1km @ 4:15 (rec 2\')',           'Facile 6km @ 5:35',  'Lungo 14km @ 5:30'],  types: ['easy','interval','easy','long'] },
+        { week: 16, sessions: ['Scarico 5km @ 5:50',  'Attivazione 4km + strides',        'Facile 3km @ 5:40',  '🏁 GARA MARATONA'],   types: ['easy','rest','easy','long'] },
       ]},
     ]
   },
   half: {
     name: 'Mezza Maratona', distance: '21.097', weeks: 12, sessionsPerWeek: 4,
+    days: ['LUN · Scarico', 'MER · Lavori', 'VEN · Facile', 'DOM · Lungo'],
     months: [
-      { month: 'Mese 1 – Base', weeks: [
-        { week: 1, sessions: ['Facile 6km','Facile 5km','Lungo 10km','Riposo Attivo'], types: ['easy','easy','long','rest'] },
-        { week: 2, sessions: ['Facile 7km','Tempo 7km','Lungo 12km','Facile 5km'], types: ['easy','tempo','long','easy'] },
-        { week: 3, sessions: ['Facile 8km','Intervalli 6x800m','Lungo 14km','Facile 5km'], types: ['easy','interval','long','easy'] },
-        { week: 4, sessions: ['Facile 6km','Tempo 8km','Lungo 16km','Riposo'], types: ['easy','tempo','long','rest'] },
+      { month: 'Mese 1 – Base & Ritmo', weeks: [
+        { week: 1,  sessions: ['Scarico 7km @ 5:40',  'Progressivo 10km (5:30→4:45)',     'Facile 7km @ 5:30',  'Lungo 14km @ 5:25'],  types: ['easy','tempo','easy','long'] },
+        { week: 2,  sessions: ['Scarico 7km @ 5:40',  '6x800m @ 4:00 (rec 90")',          'Facile 8km @ 5:30',  'Lungo 15km @ 5:25'],  types: ['easy','interval','easy','long'] },
+        { week: 3,  sessions: ['Scarico 8km @ 5:40',  'Tempo 10km @ 4:22',               'Facile 8km @ 5:25',  'Lungo 17km @ 5:20'],  types: ['easy','tempo','easy','long'] },
+        { week: 4,  sessions: ['Scarico 6km @ 5:50',  '5x800m @ 4:00 (scarico)',          'Facile 6km @ 5:40',  'Lungo 12km @ 5:35 (scarico)'], types: ['easy','interval','easy','long'] },
       ]},
-      { month: 'Mese 2 – Costruzione', weeks: [
-        { week: 5, sessions: ['Facile 8km','Intervalli 8x800m','Lungo 17km','Facile 6km'], types: ['easy','interval','long','easy'] },
-        { week: 6, sessions: ['Facile 9km','Tempo 10km','Lungo 19km','Facile 6km'], types: ['easy','tempo','long','easy'] },
-        { week: 7, sessions: ['Facile 10km','Intervalli 5x1km','Lungo 20km','Facile 7km'], types: ['easy','interval','long','easy'] },
-        { week: 8, sessions: ['Facile 6km','Tempo 6km','Lungo 14km (scarico)','Riposo'], types: ['easy','tempo','long','rest'] },
+      { month: 'Mese 2 – Sviluppo Soglia', weeks: [
+        { week: 5,  sessions: ['Scarico 8km @ 5:35',  '8x800m @ 4:00 (rec 90")',          'Facile 8km @ 5:25',  'Lungo 18km @ 5:20'],  types: ['easy','interval','easy','long'] },
+        { week: 6,  sessions: ['Scarico 8km @ 5:35',  'Tempo 12km @ 4:20',               'Facile 9km @ 5:20',  'Lungo 19km @ 5:15'],  types: ['easy','tempo','easy','long'] },
+        { week: 7,  sessions: ['Scarico 9km @ 5:35',  '3x3km @ 4:10 (rec 3\')',           'Facile 9km @ 5:20',  'Lungo 20km @ 5:10'],  types: ['easy','interval','easy','long'] },
+        { week: 8,  sessions: ['Scarico 7km @ 5:45',  'Tempo 8km @ 4:25 (scarico)',       'Facile 7km @ 5:35',  'Lungo 14km @ 5:30 (scarico)'], types: ['easy','tempo','easy','long'] },
       ]},
-      { month: 'Mese 3 – Tapering', weeks: [
-        { week: 9, sessions: ['Facile 8km','Intervalli 6x1km','Lungo 18km','Facile 6km'], types: ['easy','interval','long','easy'] },
-        { week: 10, sessions: ['Facile 8km','Tempo 8km','Lungo 16km','Facile 5km'], types: ['easy','tempo','long','easy'] },
-        { week: 11, sessions: ['Facile 6km','Tempo 5km','Facile 8km','Riposo'], types: ['easy','tempo','easy','rest'] },
-        { week: 12, sessions: ['Facile 4km','Stretching','Facile 2km','🏁 GARA MEZZA'], types: ['easy','rest','easy','long'] },
+      { month: 'Mese 3 – Tapering & Gara', weeks: [
+        { week: 9,  sessions: ['Scarico 8km @ 5:35',  '4x2km @ 4:10 (rec 2\'30")',        'Facile 8km @ 5:25',  'Lungo 18km @ 5:10'],  types: ['easy','interval','easy','long'] },
+        { week: 10, sessions: ['Scarico 7km @ 5:40',  'Tempo 10km @ 4:20',               'Facile 7km @ 5:30',  'Lungo 16km @ 5:15'],  types: ['easy','tempo','easy','long'] },
+        { week: 11, sessions: ['Scarico 6km @ 5:45',  '5x1km ritmo gara @ 4:58',         'Facile 6km @ 5:35',  'Lungo 13km @ 5:20'],  types: ['easy','interval','easy','long'] },
+        { week: 12, sessions: ['Scarico 5km @ 5:50',  'Attivazione 4km + strides',        'Facile 3km @ 5:40',  '🏁 GARA MEZZA ~1h45\''], types: ['easy','rest','easy','long'] },
       ]},
     ]
   },
   '25k': {
-    name: '25 Km', distance: '25', weeks: 10, sessionsPerWeek: 3,
+    name: '25 Km', distance: '25', weeks: 10, sessionsPerWeek: 4,
+    days: ['LUN · Scarico', 'MER · Lavori', 'VEN · Facile', 'DOM · Lungo'],
     months: [
-      { month: 'Mese 1 – Base', weeks: [
-        { week: 1, sessions: ['Facile 6km','Facile 8km','Lungo 12km'], types: ['easy','easy','long'] },
-        { week: 2, sessions: ['Facile 7km','Tempo 8km','Lungo 14km'], types: ['easy','tempo','long'] },
-        { week: 3, sessions: ['Facile 8km','Intervalli 6x800m','Lungo 16km'], types: ['easy','interval','long'] },
-        { week: 4, sessions: ['Facile 6km','Tempo 6km','Lungo 12km (scarico)'], types: ['easy','tempo','long'] },
+      { month: 'Mese 1 – Base Aerobica', weeks: [
+        { week: 1,  sessions: ['Scarico 7km @ 5:40',  'Progressivo 9km (5:30→4:50)',      'Facile 7km @ 5:30',  'Lungo 14km @ 5:25'],  types: ['easy','tempo','easy','long'] },
+        { week: 2,  sessions: ['Scarico 7km @ 5:40',  '6x800m @ 4:05 (rec 90")',          'Facile 7km @ 5:30',  'Lungo 16km @ 5:25'],  types: ['easy','interval','easy','long'] },
+        { week: 3,  sessions: ['Scarico 8km @ 5:40',  'Tempo 10km @ 4:25',               'Facile 8km @ 5:25',  'Lungo 18km @ 5:20'],  types: ['easy','tempo','easy','long'] },
+        { week: 4,  sessions: ['Scarico 6km @ 5:50',  '5x800m @ 4:05 (scarico)',          'Facile 6km @ 5:40',  'Lungo 12km @ 5:35 (scarico)'], types: ['easy','interval','easy','long'] },
       ]},
-      { month: 'Mese 2 – Costruzione', weeks: [
-        { week: 5, sessions: ['Facile 8km','Intervalli 6x1km','Lungo 18km'], types: ['easy','interval','long'] },
-        { week: 6, sessions: ['Facile 9km','Tempo 10km','Lungo 20km'], types: ['easy','tempo','long'] },
-        { week: 7, sessions: ['Facile 10km','Intervalli 5x1.2km','Lungo 22km'], types: ['easy','interval','long'] },
-        { week: 8, sessions: ['Facile 6km','Tempo 6km','Lungo 14km (scarico)'], types: ['easy','tempo','long'] },
+      { month: 'Mese 2 – Costruzione Volume', weeks: [
+        { week: 5,  sessions: ['Scarico 8km @ 5:35',  '3x3km @ 4:15 (rec 3\')',           'Facile 8km @ 5:25',  'Lungo 20km @ 5:15'],  types: ['easy','interval','easy','long'] },
+        { week: 6,  sessions: ['Scarico 8km @ 5:35',  'Tempo 12km @ 4:22',               'Facile 8km @ 5:20',  'Lungo 22km @ 5:15'],  types: ['easy','tempo','easy','long'] },
+        { week: 7,  sessions: ['Scarico 9km @ 5:35',  '4x2km @ 4:12 (rec 2\'30")',        'Facile 9km @ 5:20',  'Lungo 23km @ 5:10'],  types: ['easy','interval','easy','long'] },
+        { week: 8,  sessions: ['Scarico 7km @ 5:45',  'Tempo 8km @ 4:25 (scarico)',       'Facile 7km @ 5:35',  'Lungo 15km @ 5:30 (scarico)'], types: ['easy','tempo','easy','long'] },
       ]},
       { month: 'Mese 3 – Tapering', weeks: [
-        { week: 9, sessions: ['Facile 7km','Tempo 8km','Lungo 18km'], types: ['easy','tempo','long'] },
-        { week: 10, sessions: ['Facile 4km','Stretching','🏁 GARA 25KM'], types: ['easy','rest','long'] },
+        { week: 9,  sessions: ['Scarico 8km @ 5:40',  'Tempo 10km @ 4:20',               'Facile 7km @ 5:30',  'Lungo 20km @ 5:15'],  types: ['easy','tempo','easy','long'] },
+        { week: 10, sessions: ['Scarico 5km @ 5:50',  'Attivazione 4km + strides',        'Facile 3km @ 5:40',  '🏁 GARA 25KM'],        types: ['easy','rest','easy','long'] },
       ]},
     ]
   },
   '10k': {
-    name: '10 Km', distance: '10', weeks: 8, sessionsPerWeek: 3,
+    name: '10 Km', distance: '10', weeks: 8, sessionsPerWeek: 4,
+    days: ['LUN · Scarico', 'MER · Lavori', 'VEN · Facile', 'DOM · Lungo'],
     months: [
-      { month: 'Mese 1 – Base', weeks: [
-        { week: 1, sessions: ['Facile 4km','Facile 5km','Lungo 7km'], types: ['easy','easy','long'] },
-        { week: 2, sessions: ['Facile 5km','Tempo 5km','Lungo 8km'], types: ['easy','tempo','long'] },
-        { week: 3, sessions: ['Facile 5km','Intervalli 6x400m','Lungo 9km'], types: ['easy','interval','long'] },
-        { week: 4, sessions: ['Facile 4km','Tempo 4km','Lungo 7km (scarico)'], types: ['easy','tempo','long'] },
+      { month: 'Mese 1 – Velocità & Soglia', weeks: [
+        { week: 1,  sessions: ['Scarico 6km @ 5:40',  '8x400m @ 3:55 (rec 75")',          'Facile 6km @ 5:30',  'Lungo 10km @ 5:20'],  types: ['easy','interval','easy','long'] },
+        { week: 2,  sessions: ['Scarico 6km @ 5:40',  'Tempo 8km @ 4:18',                'Facile 6km @ 5:30',  'Lungo 11km @ 5:20'],  types: ['easy','tempo','easy','long'] },
+        { week: 3,  sessions: ['Scarico 7km @ 5:40',  '6x600m @ 3:52 (rec 90")',          'Facile 7km @ 5:25',  'Lungo 12km @ 5:15'],  types: ['easy','interval','easy','long'] },
+        { week: 4,  sessions: ['Scarico 5km @ 5:50',  '5x400m @ 3:55 (scarico)',          'Facile 5km @ 5:40',  'Lungo 9km @ 5:30 (scarico)'],  types: ['easy','interval','easy','long'] },
       ]},
-      { month: 'Mese 2 – Tapering', weeks: [
-        { week: 5, sessions: ['Facile 5km','Intervalli 8x400m','Lungo 10km'], types: ['easy','interval','long'] },
-        { week: 6, sessions: ['Facile 5km','Tempo 6km','Lungo 10km'], types: ['easy','tempo','long'] },
-        { week: 7, sessions: ['Facile 4km','Intervalli 5x600m','Lungo 8km'], types: ['easy','interval','long'] },
-        { week: 8, sessions: ['Facile 3km','Stretching','🏁 GARA 10KM'], types: ['easy','rest','long'] },
+      { month: 'Mese 2 – Picco & Gara', weeks: [
+        { week: 5,  sessions: ['Scarico 7km @ 5:40',  '5x1km @ 4:05 (rec 2\')',           'Facile 7km @ 5:25',  'Lungo 12km @ 5:15'],  types: ['easy','interval','easy','long'] },
+        { week: 6,  sessions: ['Scarico 7km @ 5:40',  'Tempo 9km @ 4:15',                'Facile 7km @ 5:25',  'Lungo 13km @ 5:10'],  types: ['easy','tempo','easy','long'] },
+        { week: 7,  sessions: ['Scarico 6km @ 5:45',  '3x2km @ 4:08 (rec 3\')',           'Facile 6km @ 5:30',  'Lungo 11km @ 5:20'],  types: ['easy','interval','easy','long'] },
+        { week: 8,  sessions: ['Scarico 4km @ 5:50',  'Attivazione 4km + strides',        'Facile 3km @ 5:40',  '🏁 GARA 10KM ~48\''],  types: ['easy','rest','easy','long'] },
       ]},
     ]
   }
@@ -665,7 +686,8 @@ function selectRace(race) {
 function renderPlan() {
   const plan = PLANS[currentRace];
   document.getElementById('hero-title').textContent = plan.name.toUpperCase();
-  document.getElementById('hero-sub').textContent = `Piano ${plan.weeks} settimane · ${plan.sessionsPerWeek} sessioni/settimana`;
+  const volMap = { marathon: '55–70', half: '38–50', '25k': '34–46', '10k': '26–35' };
+  document.getElementById('hero-sub').textContent = `Piano ${plan.weeks} settimane · Lun / Mer / Ven / Dom · ${volMap[currentRace]||'35–50'} km/sett`;
 
   // progress
   const totalW = plan.weeks;
@@ -680,20 +702,19 @@ function renderPlan() {
   plan.months.forEach(month => {
     const sec = document.createElement('div');
     sec.className = 'plan-section';
+    const days = plan.days || ['Sessione 1','Sessione 2','Sessione 3','Sessione 4'];
+    const dayHeaders = days.slice(0, plan.sessionsPerWeek).map(d => `<th>${d}</th>`).join('');
     sec.innerHTML = `
       <div class="plan-header">
         <span class="section-title" style="margin:0">${month.month}</span>
-        <span class="month-badge">Settimane ${month.weeks[0].week}–${month.weeks[month.weeks.length-1].week}</span>
+        <span class="month-badge">Sett. ${month.weeks[0].week}–${month.weeks[month.weeks.length-1].week}</span>
       </div>
       <div class="plan-table-wrap">
         <table class="plan-table">
           <thead>
             <tr>
               <th>Sett.</th>
-              <th>Sessione 1</th>
-              <th>Sessione 2</th>
-              <th>Sessione 3</th>
-              ${plan.sessionsPerWeek === 4 ? '<th>Sessione 4</th>' : ''}
+              ${dayHeaders}
               <th>Log</th>
             </tr>
           </thead>
