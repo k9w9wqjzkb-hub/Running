@@ -2,13 +2,29 @@
   "name": "RunCoach — Prepara la tua gara",
   "short_name": "RunCoach",
   "description": "Piano di allenamento per maratona, mezza maratona, 25km e 10km",
-  "start_url": "./",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
   "orientation": "portrait",
   "lang": "it",
   "icons": [
+    {
+      "src": "icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-167.png",
+      "sizes": "167x167",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",

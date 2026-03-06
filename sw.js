@@ -1,9 +1,14 @@
-// RunCoach Service Worker — v1.0
-const CACHE = 'runcoach-v1';
+// RunCoach Service Worker — v2.0
+const CACHE = 'runcoach-v2';
 const ASSETS = [
-  './',
   './index.html',
   './manifest.json',
+  './apple-touch-icon.png',
+  './icons/icon-152.png',
+  './icons/icon-167.png',
+  './icons/icon-180.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap'
 ];
 
